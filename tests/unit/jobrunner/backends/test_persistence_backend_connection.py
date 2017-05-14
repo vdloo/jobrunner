@@ -1,4 +1,4 @@
-from jobrunner.post_job import persistence_backend_connection
+from jobrunner.backends import persistence_backend_connection
 from jobrunner.settings import PERSISTENCE_CONF
 from tests.testcase import TestCase
 
@@ -6,7 +6,7 @@ from tests.testcase import TestCase
 class TestPersistenceBackendConnection(TestCase):
     def setUp(self):
         self.fetch = self.set_up_patch(
-            'jobrunner.post_job.persistence_backends.fetch'
+            'jobrunner.backends.persistence_backends.fetch'
         )
 
     def test_persistence_backend_connection_fetches_backend(self):

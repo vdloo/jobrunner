@@ -1,44 +1,15 @@
-from contextlib import closing, contextmanager
 from logging import getLogger
 from uuid import uuid4
-
 from taskflow import engines
 from taskflow.persistence import backends as persistence_backends
-from taskflow.jobs import backends as jobboard_backends
 from taskflow.persistence import models as persistence_models
 
-from jobrunner.settings import PERSISTENCE_CONF, LOGBOOK_NAME, CONDUCTOR_NAME, JOBBOARD_CONF
+from jobrunner.backends import persistence_backend_connection, \
+    jobboard_backend_connection
+from jobrunner.settings import PERSISTENCE_CONF, LOGBOOK_NAME, CONDUCTOR_NAME
 from to_refactor.flows import fixture_flow_factory
 
 log = getLogger(__name__)
-
-
-@contextmanager
-def persistence_backend_connection():
-    """
-    Get a connection to the persistence backend and yield the connection
-    to the context
-    :yield obj conn: The persistence backend connection
-    """
-    persist_backend = persistence_backends.fetch(PERSISTENCE_CONF)
-    with closing(persist_backend.get_connection()) as conn:
-        yield conn
-
-
-@contextmanager
-def jobboard_backend_connection():
-    """
-    Get a connection to the job board backend and yield the connection
-    to the context
-    :yield obj conn: The job board backend connection
-    """
-    persistence_backend = persistence_backends.fetch(PERSISTENCE_CONF)
-    job_board_backend = jobboard_backends.fetch(
-        CONDUCTOR_NAME, JOBBOARD_CONF, persistence=persistence_backend
-    )
-    job_board_backend.connect()
-    with closing(job_board_backend) as conn:
-        yield conn
 
 
 def get_logbook_by_name(logbook_name, conn):
