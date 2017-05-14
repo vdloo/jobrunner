@@ -16,6 +16,7 @@
 import contextlib
 
 from taskflow.conductors import backends as conductor_backends
+from taskflow.exceptions import StorageFailure
 from taskflow.jobs import backends as job_backends
 from taskflow.persistence import backends as persistence_backends
 from settings import JOBBOARD_CONF, CONDUCTOR_NAME, PERSISTENCE_CONF

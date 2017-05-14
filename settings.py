@@ -1,4 +1,5 @@
 import os
+from subprocess import check_output
 
 top_dir = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                        os.pardir))
@@ -11,4 +12,6 @@ PERSISTENCE_CONF = {
 }
 cPERSISTENCE_URI = "mysql:///taskflow@taskflow   {}".format(os.path.join(top_dir, 'db.sqlite3'))
 LOGBOOK_NAME = 'jobrunner'
-CONDUCTOR_NAME = 'conductor'
+CONDUCTOR_NAME = check_output(
+    "ip addr show tun0 | grep inet6 | awk '{print$2}'", shell=True
+).strip().decode('utf-8')

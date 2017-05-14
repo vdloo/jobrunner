@@ -23,7 +23,7 @@ from taskflow.persistence import backends as persistence_backends
 from taskflow.persistence import models
 
 from flows import fixture_flow_factory
-from settings import top_dir, JOBBOARD_CONF, LOGBOOK_NAME, CONDUCTOR_NAME, JOBS, PERSISTENCE_CONF
+from settings import top_dir, JOBBOARD_CONF, LOGBOOK_NAME, CONDUCTOR_NAME, PERSISTENCE_CONF
 
 sys.path.insert(0, top_dir)
 
@@ -37,41 +37,39 @@ def run_poster():
         job_backend = job_backends.fetch(CONDUCTOR_NAME, JOBBOARD_CONF,
                                          persistence=persist_backend)
         job_backend.connect()
-        for poster_number in range(JOBS):
-            print("Posting job number {}".format(poster_number))
-            # Create information in the persistence backend about the
-            # unit of work we want to complete and the factory that
-            # can be called to create the tasks that the work unit needs
-            # to be done.
-            with contextlib.closing(persist_backend.get_connection()) as conn:
-                lb = get_logbook_by_name(LOGBOOK_NAME, conn)
-                fd = models.FlowDetail("flow-from-{}".format(CONDUCTOR_NAME),
-                                       uuidutils.generate_uuid())
-                fd.meta.update({
-                    'store': {
-                        'message': 'Injector message'
-                    }
-                })
-                lb.add(fd)
-                conn.save_logbook(lb)
+        # Create information in the persistence backend about the
+        # unit of work we want to complete and the factory that
+        # can be called to create the tasks that the work unit needs
+        # to be done.
+        with contextlib.closing(persist_backend.get_connection()) as conn:
+            lb = get_logbook_by_name(LOGBOOK_NAME, conn)
+            fd = models.FlowDetail("flow-from-{}".format(CONDUCTOR_NAME),
+                                   uuidutils.generate_uuid())
+            fd.meta.update({
+                'store': {
+                    'message': 'Injector message'
+                }
+            })
+            lb.add(fd)
+            conn.save_logbook(lb)
 
-                engines.save_factory_details(
-                    flow_detail=fd,
-                    flow_factory=fixture_flow_factory,
-                    factory_args=[],
-                    factory_kwargs={},
-                    backend=persist_backend
-                )
-                # Post the job to the backend
-                job = job_backend.post(
-                    "job-from-{}".format(CONDUCTOR_NAME), book=lb, details={
-                            # Need this to find the job back in the logbook
-                            # See _flow_detail_from_job
-                            # http://pydoc.net/Python/taskflow/0.6.1/taskflow.conductors.base/
-                            'flow_uuid': fd.uuid
-                        }
-                )
-                print("Posted: {}".format(job))
+            engines.save_factory_details(
+                flow_detail=fd,
+                flow_factory=fixture_flow_factory,
+                factory_args=[],
+                factory_kwargs={},
+                backend=persist_backend
+            )
+            # Post the job to the backend
+            job = job_backend.post(
+                "job-from-{}".format(CONDUCTOR_NAME), book=lb, details={
+                        # Need this to find the job back in the logbook
+                        # See _flow_detail_from_job
+                        # http://pydoc.net/Python/taskflow/0.6.1/taskflow.conductors.base/
+                        'flow_uuid': fd.uuid
+                    }
+            )
+            print("Posted: {}".format(job))
 
 
 def create_logbook():
