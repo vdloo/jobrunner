@@ -19,4 +19,6 @@ class TestPostJob(TestCase):
     def test_post_job_performs_post(self):
         post_job()
 
-        self.perform_post.assert_called_once_with()
+        self.perform_post.assert_called_once_with(
+            self.ensure_logbook_exists.return_value
+        )

@@ -1,4 +1,4 @@
-from mock import Mock
+from mock import Mock, ANY
 
 from jobrunner.post_job import ensure_logbook_exists
 from jobrunner.settings import LOGBOOK_NAME
@@ -28,7 +28,7 @@ class TestEnsureLogbookExists(TestCase):
     def test_ensure_logbook_exists_logs_debug_message(self):
         ensure_logbook_exists()
 
-        self.assertTrue(self.log.debug.called)
+        self.log.debug.assert_called_once_with(ANY)
 
     def test_ensure_logbook_exists_gets_persistence_backend_connection(self):
         ensure_logbook_exists()
@@ -72,3 +72,15 @@ class TestEnsureLogbookExists(TestCase):
         self.connection.save_logbook.assert_called_once_with(
             self.LogBook.return_value
         )
+
+    def test_ensure_logbook_exists_returns_existing_logbook_if_exists(self):
+        ret = ensure_logbook_exists()
+
+        self.assertEqual(ret, self.get_logbook_by_name.return_value)
+
+    def test_ensure_logbook_exists_returns_created_lb_if_did_not_exist(self):
+        self.get_logbook_by_name.side_effect = StopIteration
+
+        ret = ensure_logbook_exists()
+
+        self.assertEqual(ret, self.LogBook.return_value)
