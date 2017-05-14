@@ -10,14 +10,6 @@ class TestPerformPost(TestCase):
         self.log = self.set_up_patch(
             'jobrunner.post_job.log'
         )
-        self.persistence_backend_connection = self.set_up_patch(
-            'jobrunner.post_job.persistence_backend_connection'
-        )
-        self.persistence_backend_connection.return_value \
-            .__exit__ = lambda a, b, c, d: None
-        self.p_connection = Mock()
-        self.persistence_backend_connection.return_value \
-            .__enter__ = lambda x: self.p_connection
         self.jobboard_backend_connection = self.set_up_patch(
             'jobrunner.post_job.jobboard_backend_connection'
         )
@@ -42,17 +34,10 @@ class TestPerformPost(TestCase):
 
         self.log.debug.assert_called_once_with(ANY)
 
-    def test_perform_post_uses_persistence_backend(self):
-        perform_post(self.logbook)
-
-        self.persistence_backend_connection.assert_called_once_with()
-
     def test_perform_post_uses_job_board_backend(self):
         perform_post(self.logbook)
 
-        self.jobboard_backend_connection.assert_called_once_with(
-            self.p_connection
-        )
+        self.jobboard_backend_connection.assert_called_once_with()
 
     def test_perform_post_composes_flow_details(self):
         perform_post(self.logbook)
@@ -64,16 +49,14 @@ class TestPerformPost(TestCase):
 
         self.save_flow_detail_to_logbook.assert_called_once_with(
             self.compose_flow_detail.return_value,
-            self.logbook,
-            self.j_connection
+            self.logbook
         )
 
     def test_perform_post_saves_flow_factory_into_flow_detail(self):
         perform_post(self.logbook)
 
         self.save_flow_factory_into_flow_detail.assert_called_once_with(
-            self.compose_flow_detail.return_value,
-            self.p_connection
+            self.compose_flow_detail.return_value
         )
 
     def test_perform_post_posts_job_using_the_job_backend_connection(self):
