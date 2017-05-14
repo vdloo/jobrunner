@@ -1,0 +1,48 @@
+#!/bin/bash
+export PYTHONPATH=../
+
+RUN_ENTRYPOINT="jobrunner_run.py"
+POST_ENTRYPOINT="jobrunner_post.py"
+SHOW_ENTRYPOINT="jobrunner_show.py"
+
+function print_help {
+    cat <<'END'
+Usage: jobrunner [CMD..] [OPTIONS] [-h]
+
+  run                        Run a conductor and process 
+                             posted jobs from the jobboard
+
+  post                       Post a job to the jobboard for
+                             any conductor to process
+
+  show                       List the status of any jobs
+                             running at the moment
+END
+}
+
+case $1 in 
+    run)
+    JOBRUNNER_CMD=$RUN_ENTRYPOINT
+    shift 
+    ;;
+    post)
+    JOBRUNNER_CMD=$POST_ENTRYPOINT
+    shift
+    ;;
+    show)
+    JOBRUNNER_CMD=$SHOW_ENTRYPOINT
+    shift
+    ;;
+    *)
+    print_help;
+    exit 1
+    ;;
+esac
+
+ENTRYPOINT_SCRIPT_PATH=$(readlink -f "$0")
+JOBRUNNER_BIN_DIRECTORY=$(dirname "$ENTRYPOINT_SCRIPT_PATH")
+JOBRUNNER_DIRECTORY=$(dirname "$JOBRUNNER_BIN_DIRECTORY")
+
+export PYTHONPATH=$JOBRUNNER_DIRECTORY
+$JOBRUNNER_BIN_DIRECTORY/$JOBRUNNER_CMD $@
+

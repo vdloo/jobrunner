@@ -1,3 +1,4 @@
-simple taskflow jobrunner
+Jobrunner
+=========
 
-this repository contains a taskflow jobrunner that distributes some work over any machines I have running at the moment
+General purpose job runner that uses [OpenStack TaskFlow](https://wiki.openstack.org/wiki/TaskFlow)
