@@ -26,17 +26,18 @@ def persistence_backend_connection():
 
 
 @contextmanager
-def jobboard_backend_connection(persistence_backend):
+def jobboard_backend_connection():
     """
     Get a connection to the job board backend and yield the connection
     to the context
-    :param obj persistence_backend: Connection to a persistence backend
     :yield obj conn: The job board backend connection
     """
+    persistence_backend = persistence_backends.fetch(PERSISTENCE_CONF)
     job_board_backend = jobboard_backends.fetch(
         CONDUCTOR_NAME, JOBBOARD_CONF, persistence=persistence_backend
     )
-    with closing(job_board_backend.connect()) as conn:
+    job_board_backend.connect()
+    with closing(job_board_backend) as conn:
         yield conn
 
 
@@ -85,25 +86,25 @@ def compose_flow_detail(store=None):
     return flow_detail
 
 
-def save_flow_detail_to_logbook(flow_detail, logbook, job_backend):
+def save_flow_detail_to_logbook(flow_detail, logbook):
     """
     Save a flow detail to a logbook
     :param obj flow_detail: A flow detail
     :param obj logbook: A logbook
-    :param obj job_backend: The job board backend
     :return None:
     """
     logbook.add(flow_detail)
-    job_backend.save_logbook(logbook)
+    with persistence_backend_connection() as conn:
+        conn.save_logbook(logbook)
 
 
-def save_flow_factory_into_flow_detail(flow_detail, persist_backend):
+def save_flow_factory_into_flow_detail(flow_detail):
     """
     Save a flow factory into a flow detail
     :param obj flow_detail: A flow detail
-    :param obj persist_backend: The persistence backend
     :return None:
     """
+    persist_backend = persistence_backends.fetch(PERSISTENCE_CONF)
     engines.save_factory_details(
         flow_detail=flow_detail,
         flow_factory=fixture_flow_factory,
@@ -120,20 +121,19 @@ def perform_post(logbook):
     :return None:
     """
     log.debug("Posting job to the job board")
-    with persistence_backend_connection() as persist_backend:
-        with jobboard_backend_connection(persist_backend) as job_backend:
-            flow_detail = compose_flow_detail()
-            save_flow_detail_to_logbook(flow_detail, logbook, job_backend)
-            save_flow_factory_into_flow_detail(flow_detail, persist_backend)
-            job_backend.post(
-                "job-from-{}".format(CONDUCTOR_NAME), book=logbook, details={
-                    # Need this to find the job back in the logbook
-                    # See _flow_detail_from_job
-                    # http://pydoc.net/Python/taskflow/0.6.1/
-                    # taskflow.conductors.base/
-                    'flow_uuid': flow_detail.uuid
-                }
-            )
+    with jobboard_backend_connection() as job_backend:
+        flow_detail = compose_flow_detail()
+        save_flow_detail_to_logbook(flow_detail, logbook)
+        save_flow_factory_into_flow_detail(flow_detail)
+        job_backend.post(
+            "job-from-{}".format(CONDUCTOR_NAME), book=logbook, details={
+                # Need this to find the job back in the logbook
+                # See _flow_detail_from_job
+                # http://pydoc.net/Python/taskflow/0.6.1/
+                # taskflow.conductors.base/
+                'flow_uuid': flow_detail.uuid
+            }
+        )
 
 
 def post_job():
