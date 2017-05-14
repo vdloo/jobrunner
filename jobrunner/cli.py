@@ -1,6 +1,7 @@
 from argparse import ArgumentParser
 
 from jobrunner.log import setup_logging
+from jobrunner.post_job import post_job
 
 
 def parse_arguments(parser):
@@ -29,8 +30,8 @@ def parse_post_arguments():
 
 def post():
     """
-    Post a job to the jobboard
+    Post a job to the jobboard based on commandline arguments
     :return None:
     """
-    args = parse_post_arguments()
-    # Does not post a job yet
+    parse_post_arguments()
+    post_job()
