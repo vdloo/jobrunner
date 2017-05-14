@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 from jobrunner.log import setup_logging
 from jobrunner.post_job import post_job
 from jobrunner.run_conductor import run_conductor
+from jobrunner.show_logbook import show_logbook
 
 
 def parse_arguments(parser):
@@ -57,3 +58,24 @@ def run():
     """
     parse_run_arguments()
     run_conductor()
+
+
+def parse_show_arguments():
+    """
+    Parse the commandline options for showing running jobs
+    :return obj args: parsed arguments
+    """
+    parser = ArgumentParser(
+        prog="jobrunner show",
+        description='Show information about running jobs'
+    )
+    return parse_arguments(parser)
+
+
+def show():
+    """
+    Show information about running jobs
+    :return None:
+    """
+    parse_show_arguments()
+    show_logbook()

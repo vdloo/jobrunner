@@ -6,7 +6,7 @@ from taskflow.retry import Times
 
 
 class ExampleTask(task.Task):
-    def execute(self, message):
+    def execute(self, *args, **kwargs):
         print("Running blocking simple HTTP server")
         check_call(
             "python -m http.server 8432", shell=True

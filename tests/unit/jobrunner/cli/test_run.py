@@ -16,7 +16,7 @@ class TestRun(TestCase):
 
         self.parse_run_arguments.assert_called_once_with()
 
-    def test_run_runs_job(self):
+    def test_run_runs_conductor(self):
         run()
 
         self.run_conductor.assert_called_once_with()
