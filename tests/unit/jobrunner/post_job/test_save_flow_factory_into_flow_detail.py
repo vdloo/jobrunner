@@ -1,9 +1,9 @@
 from mock import Mock
 
+from jobrunner.flows import fixture_flow_factory
 from jobrunner.post_job import save_flow_factory_into_flow_detail
 from jobrunner.settings import PERSISTENCE_CONF
 from tests.testcase import TestCase
-from to_refactor.flows import fixture_flow_factory
 
 
 class TestSaveFlowFactoryIntoFlowDetail(TestCase):

@@ -6,8 +6,8 @@ from taskflow.persistence import models as persistence_models
 
 from jobrunner.backends import persistence_backend_connection, \
     jobboard_backend_connection
+from jobrunner.flows import fixture_flow_factory
 from jobrunner.settings import PERSISTENCE_CONF, LOGBOOK_NAME, CONDUCTOR_NAME
-from to_refactor.flows import fixture_flow_factory
 
 log = getLogger(__name__)
 
