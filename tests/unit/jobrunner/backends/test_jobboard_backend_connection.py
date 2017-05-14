@@ -1,6 +1,4 @@
-from mock import Mock
-
-from jobrunner.post_job import jobboard_backend_connection
+from jobrunner.backends import jobboard_backend_connection
 from jobrunner.settings import CONDUCTOR_NAME, PERSISTENCE_CONF
 from jobrunner.settings import JOBBOARD_CONF
 from tests.testcase import TestCase
@@ -9,10 +7,10 @@ from tests.testcase import TestCase
 class TestJobboardBackendConnection(TestCase):
     def setUp(self):
         self.persistence_fetch = self.set_up_patch(
-            'jobrunner.post_job.persistence_backends.fetch'
+            'jobrunner.backends.persistence_backends.fetch'
         )
         self.job_board_fetch = self.set_up_patch(
-            'jobrunner.post_job.jobboard_backends.fetch'
+            'jobrunner.backends.jobboard_backends.fetch'
         )
 
     def test_jobboard_backend_connection_fetches_persistence_backend(self):
