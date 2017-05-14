@@ -6,6 +6,7 @@ from taskflow.retry import Times
 
 
 class ExampleTask(task.Task):
+
     def execute(self, *args, **kwargs):
         print("Running blocking simple HTTP server")
         check_call(
@@ -20,7 +21,7 @@ def fixture_flow_factory():
     f = lf.Flow("fixture_flow", retry=Times(10))
     f.add(
         ExampleTask(
-            "example_task_1"
+            "run_simple_webserver"
         )
     )
     return f
