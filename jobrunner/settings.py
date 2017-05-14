@@ -21,3 +21,4 @@ try:
     ).strip().decode('utf-8')
 except CalledProcessError:
     CONDUCTOR_NAME = gethostname()
+SHOW_POLLERS = 20
