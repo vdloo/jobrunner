@@ -1,6 +1,6 @@
 from mock import Mock
 
-from jobrunner.flows import fixture_flow_factory
+from flows.builtin.webserver.factory import simple_http_server_flow_factory
 from jobrunner.post_job import save_flow_factory_into_flow_detail
 from jobrunner.settings import PERSISTENCE_CONF
 from tests.testcase import TestCase
@@ -26,7 +26,7 @@ class TestSaveFlowFactoryIntoFlowDetail(TestCase):
 
         self.save_factory_details.assert_called_once_with(
             flow_detail=self.flow_detail,
-            flow_factory=fixture_flow_factory,
+            flow_factory=simple_http_server_flow_factory,
             factory_args=[],
             factory_kwargs={},
             backend=self.fetch.return_value
