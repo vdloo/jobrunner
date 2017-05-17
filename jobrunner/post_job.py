@@ -4,9 +4,9 @@ from taskflow import engines
 from taskflow.persistence import backends as persistence_backends
 from taskflow.persistence import models as persistence_models
 
+from flows.builtin.webserver.factory import simple_http_server_flow_factory
 from jobrunner.backends import persistence_backend_connection, \
     jobboard_backend_connection
-from jobrunner.flows import fixture_flow_factory
 from jobrunner.settings import PERSISTENCE_CONF, LOGBOOK_NAME, CONDUCTOR_NAME
 
 log = getLogger(__name__)
@@ -78,7 +78,7 @@ def save_flow_factory_into_flow_detail(flow_detail):
     persist_backend = persistence_backends.fetch(PERSISTENCE_CONF)
     engines.save_factory_details(
         flow_detail=flow_detail,
-        flow_factory=fixture_flow_factory,
+        flow_factory=simple_http_server_flow_factory,
         factory_args=[],
         factory_kwargs={},
         backend=persist_backend
