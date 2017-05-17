@@ -4,7 +4,6 @@ from taskflow import engines
 from taskflow.persistence import backends as persistence_backends
 from taskflow.persistence import models as persistence_models
 
-from flows.builtin.webserver.factory import simple_http_server_flow_factory
 from jobrunner.backends import persistence_backend_connection, \
     jobboard_backend_connection
 from jobrunner.settings import PERSISTENCE_CONF, LOGBOOK_NAME, CONDUCTOR_NAME
@@ -126,10 +125,23 @@ def perform_post(
         )
 
 
-def post_job():
+def post_job(
+    flow_factory, store=None, factory_args=None, factory_kwargs=None
+):
     """
     Post a job to the job board
+    :param obj flow_factory: A function that returns a flow
+    :param dict store: The store to post with the flow
+    :param list factory_args: The args to pass to the flow factory
+    during flow pickup time in the conductor
+    :param dict factory_kwargs: The kwargs to pass to the flow factory
+    during flow pickup time in the conductor
     :return None:
     """
     logbook = ensure_logbook_exists()
-    perform_post(logbook, simple_http_server_flow_factory)
+    perform_post(
+        logbook, flow_factory,
+        store=store,
+        factory_args=factory_args,
+        factory_kwargs=factory_kwargs
+    )
