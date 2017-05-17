@@ -69,33 +69,52 @@ def save_flow_detail_to_logbook(flow_detail, logbook):
         conn.save_logbook(logbook)
 
 
-def save_flow_factory_into_flow_detail(flow_detail):
+def save_flow_factory_into_flow_detail(
+    flow_detail, flow_factory, factory_args=None, factory_kwargs=None
+):
     """
     Save a flow factory into a flow detail
     :param obj flow_detail: A flow detail
+    :param obj flow_factory: A function that returns a flow
+    :param list factory_args: The args to pass to the flow factory
+    during flow pickup time in the conductor
+    :param dict factory_kwargs: The kwargs to pass to the flow factory
+    during flow pickup time in the conductor
     :return None:
     """
     persist_backend = persistence_backends.fetch(PERSISTENCE_CONF)
     engines.save_factory_details(
         flow_detail=flow_detail,
-        flow_factory=simple_http_server_flow_factory,
-        factory_args=[],
-        factory_kwargs={},
+        flow_factory=flow_factory,
+        factory_args=factory_args or list(),
+        factory_kwargs=factory_kwargs or dict(),
         backend=persist_backend
     )
 
 
-def perform_post(logbook):
+def perform_post(
+    logbook, flow_factory, store=None, factory_args=None, factory_kwargs=None
+):
     """
     Connect to the job board backend and queue the job
     :param obj logbook: The logbook to post the job to
+    :param obj flow_factory: A function that returns a flow
+    :param dict store: The store to post with the flow
+    :param list factory_args: The args to pass to the flow factory
+    during flow pickup time in the conductor
+    :param dict factory_kwargs: The kwargs to pass to the flow factory
+    during flow pickup time in the conductor
     :return None:
     """
     log.debug("Posting job to the job board")
     with jobboard_backend_connection() as job_backend:
-        flow_detail = compose_flow_detail()
+        flow_detail = compose_flow_detail(store or dict())
         save_flow_detail_to_logbook(flow_detail, logbook)
-        save_flow_factory_into_flow_detail(flow_detail)
+        save_flow_factory_into_flow_detail(
+            flow_detail, flow_factory,
+            factory_args=factory_args,
+            factory_kwargs=factory_kwargs
+        )
         job_backend.post(
             "job-from-{}".format(CONDUCTOR_NAME), book=logbook, details={
                 # Need this to find the job back in the logbook
@@ -113,4 +132,4 @@ def post_job():
     :return None:
     """
     logbook = ensure_logbook_exists()
-    perform_post(logbook)
+    perform_post(logbook, simple_http_server_flow_factory)

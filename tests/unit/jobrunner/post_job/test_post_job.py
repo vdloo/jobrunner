@@ -1,3 +1,4 @@
+from flows.builtin.webserver.factory import simple_http_server_flow_factory
 from jobrunner.post_job import post_job
 from tests.testcase import TestCase
 
@@ -20,5 +21,6 @@ class TestPostJob(TestCase):
         post_job()
 
         self.perform_post.assert_called_once_with(
-            self.ensure_logbook_exists.return_value
+            self.ensure_logbook_exists.return_value,
+            simple_http_server_flow_factory
         )
