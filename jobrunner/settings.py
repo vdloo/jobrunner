@@ -22,9 +22,4 @@ LOGBOOK_NAME = 'jobrunner'
 SHOW_POLLERS = 20
 JOBS = dict()
 
-try:
-    CONDUCTOR_NAME = check_output(
-        "ip addr show tun0 | grep inet6 | awk '{print$2}'", shell=True
-    ).strip().decode('utf-8')
-except CalledProcessError:
-    CONDUCTOR_NAME = gethostname()
+CONDUCTOR_NAME = gethostname()
