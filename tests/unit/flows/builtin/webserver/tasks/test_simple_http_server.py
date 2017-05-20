@@ -10,7 +10,7 @@ class TestSimpleHTTPServerExecute(TestCase):
         self.task = SimpleHTTPServer()
 
     def test_simple_http_server_runs_simple_http_server(self):
-        self.task.execute()
+        self.task.execute(port=8432)
 
         expected_command = ['python', '-m', 'http.server', '8432']
         self.check_call.assert_called_once_with(expected_command)

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from jobrunner.cli import show
+from jobrunner.cli.show import show
 
 if __name__ == '__main__':
     show()

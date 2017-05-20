@@ -1,9 +1,13 @@
 import os
+from os.path import dirname, join
 from socket import gethostname
 from subprocess import check_output, CalledProcessError
 
+from os.path import realpath
+
 top_dir = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                        os.pardir))
+PROJECT_DIR = join(dirname(dirname(realpath(__file__))))
 # todo: get the IP from the ENV or a flag
 HARDCODED_INTERNAL_IP = 'fc63:2207:6b22:91e5:5b0b:ef32:4786:c262'
 JOBBOARD_CONF = {
@@ -15,10 +19,12 @@ PERSISTENCE_CONF = {
                   "/taskflow".format(HARDCODED_INTERNAL_IP),
 }
 LOGBOOK_NAME = 'jobrunner'
+SHOW_POLLERS = 20
+JOBS = dict()
+
 try:
     CONDUCTOR_NAME = check_output(
         "ip addr show tun0 | grep inet6 | awk '{print$2}'", shell=True
     ).strip().decode('utf-8')
 except CalledProcessError:
     CONDUCTOR_NAME = gethostname()
-SHOW_POLLERS = 20

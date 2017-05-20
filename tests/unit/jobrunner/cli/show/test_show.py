@@ -1,14 +1,14 @@
-from jobrunner.cli import show
+from jobrunner.cli.show import show
 from tests.testcase import TestCase
 
 
 class TestShow(TestCase):
     def setUp(self):
         self.parse_show_arguments = self.set_up_patch(
-            'jobrunner.cli.parse_show_arguments'
+            'jobrunner.cli.show.parse_show_arguments'
         )
         self.show_logbook = self.set_up_patch(
-            'jobrunner.cli.show_logbook'
+            'jobrunner.cli.show.show_logbook'
         )
 
     def test_show_parses_show_arguments(self):

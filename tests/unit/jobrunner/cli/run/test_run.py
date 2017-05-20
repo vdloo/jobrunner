@@ -1,14 +1,14 @@
-from jobrunner.cli import run
+from jobrunner.cli.run import run
 from tests.testcase import TestCase
 
 
 class TestRun(TestCase):
     def setUp(self):
         self.parse_run_arguments = self.set_up_patch(
-            'jobrunner.cli.parse_run_arguments'
+            'jobrunner.cli.run.parse_run_arguments'
         )
         self.run_conductor = self.set_up_patch(
-            'jobrunner.cli.run_conductor'
+            'jobrunner.cli.run.run_conductor'
         )
 
     def test_run_parses_run_arguments(self):

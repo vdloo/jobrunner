@@ -7,8 +7,15 @@ log = getLogger(__name__)
 
 
 class SimpleHTTPServer(Task):
-    def execute(self):
+    def execute(self, port):
+        """
+        RUn a python basic HTTP server in a subshell
+        in the current working directory using the
+        specified port.
+        :param int port: The port to use
+        :return None:
+        """
         log.info("Running blocking simple HTTP server")
         check_call([
-            'python', '-m', 'http.server', '8432'
+            'python', '-m', 'http.server', str(port)
         ])
