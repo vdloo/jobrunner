@@ -4,7 +4,7 @@ from multiprocessing.pool import Pool
 from os import system
 from time import sleep
 
-from jobrunner.backends import persistence_backend_connection
+from jobrunner.backends import persistence_backend_connection, jobboard_backend_connection
 from jobrunner.settings import SHOW_POLLERS
 
 log = getLogger(__name__)
@@ -39,6 +39,19 @@ def get_logbooks(persistence_backend):
     return persistence_backend.get_logbooks()
 
 
+def get_owner(flow_uuid, jobboard_backend):
+    """
+    Find the owner of a running job
+    :param str flow_uuid: UUID of the flow to find the owner of
+    :param obj jobboard_backend: Connection to the jobboard backend
+    :return str owner: Name of the conductor owning the job
+    """
+    for job in jobboard_backend.iterjobs():
+        cur_uuid = job.details.get('flow_uuid')
+        if cur_uuid and cur_uuid == flow_uuid:
+            return jobboard_backend.find_owner(job)
+
+
 def get_all_logbooks():
     """
     Retrieve all logbooks from the persistence backend and
@@ -47,27 +60,29 @@ def get_all_logbooks():
     representing all logbooks and their contents currently in the
     persistence backend
     """
-    with persistence_backend_connection() as conn:
-        return [
-            {
-                'name': lb.name,
-                'meta': lb.meta,
-                'flow_details': [
-                    {
-                        'uuid': f.uuid,
-                        'atom_details': [
-                            {
-                                'uuid': a.uuid,
-                                'name': a.name,
-                                'state': a.state,
-                            } for a in get_atoms_for_flow(f, conn)
-                        ],
-                        'meta': f.meta,
-                        'state': f.state,
-                    } for f in get_flows_from_logbook(lb, conn)
-                ]
-            } for lb in get_logbooks(conn)
-        ]
+    with persistence_backend_connection() as p:
+        with jobboard_backend_connection() as j:
+            return [
+                {
+                    'name': lb.name,
+                    'meta': lb.meta,
+                    'flow_details': [
+                        {
+                            'uuid': f.uuid,
+                            'atom_details': [
+                                {
+                                    'uuid': a.uuid,
+                                    'name': a.name,
+                                    'state': a.state,
+                                } for a in get_atoms_for_flow(f, p)
+                            ],
+                            'meta': f.meta,
+                            'state': f.state,
+                            'owner': get_owner(f.uuid, j)
+                        } for f in get_flows_from_logbook(lb, p)
+                    ]
+                } for lb in get_logbooks(p)
+            ]
 
 
 def print_running_from_logbook(logbook):
@@ -77,7 +92,7 @@ def print_running_from_logbook(logbook):
     :return None:
     """
     system('clear')
-    print("{:<20} {:<37} {:<16}".format('NAME', 'ID', 'STATE'))
+    print("{:<20} {:<37} {:<16} {:<26}".format('NAME', 'ID', 'STATE', 'OWNER'))
     for flow_detail in logbook['flow_details']:
         state = flow_detail['state']
         is_running = state == 'RUNNING'
@@ -85,13 +100,18 @@ def print_running_from_logbook(logbook):
         if is_running or is_waiting:
             with suppress(Exception):
                 flow_uuid = flow_detail['uuid']
+                owner = flow_detail.get('owner', 'UNCLAIMED')
                 name = flow_detail['meta']['factory']['name']
                 nice_name = name.split('.')[-1].replace('_flow_factory', '')
-                print("{:<20} {:<37} {:<16}".format(
-                    nice_name, flow_uuid, state or "WAITING")
+                print("{:<20} {:<37} {:<16} {:<26}".format(
+                    nice_name, flow_uuid, state or "WAITING", owner)
                 )
                 for atom_detail in flow_detail['atom_details']:
-                    if not atom_detail['name'].endswith('_retry'):
+                    if not atom_detail['name'].endswith(
+                        '_retry'
+                    ) and not atom_detail['name'].endswith(
+                        '_INJECTOR'
+                    ):
                         print(
                             "  {:<20} {}".format(
                                 atom_detail['name'], atom_detail['state']
@@ -105,9 +125,10 @@ def query_and_print():
     :return None:
     """
     while True:
-        all_logbooks_as_dicts = get_all_logbooks()
-        if all_logbooks_as_dicts:
-            print_running_from_logbook(all_logbooks_as_dicts[0])
+        with suppress(Exception):
+            all_logbooks_as_dicts = get_all_logbooks()
+            if all_logbooks_as_dicts:
+                print_running_from_logbook(all_logbooks_as_dicts[0])
 
 
 def show_logbook():
