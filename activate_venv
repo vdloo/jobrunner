@@ -1,6 +1,9 @@
 # run by sourcing (need env for venv)
 # source activate_venv
 
+V_WRAPPER=`which virtualenvwrapper.sh`
+[ -z $V_WRAPPER ] && V_WRAPPER="/usr/share/virtualenvwrapper/virtualenvwrapper.sh"
+[ -z $VIRTUALENVWRAPPER_SCRIPT ] && source $V_WRAPPER
 if type -p virtualenv > /dev/null 2>&1; then
     if workon jobrunner > /dev/null 2>&1; then
 	# activate the existing virtual env
