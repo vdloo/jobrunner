@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from jobrunner.cli import post
+from jobrunner.cli.post import post
 
 if __name__ == '__main__':
     post()

@@ -1,13 +1,13 @@
 from mock import Mock, call
 
-from jobrunner.cli import parse_arguments
+from jobrunner.cli.parse import parse_arguments
 from tests.testcase import TestCase
 
 
 class TestParseArguments(TestCase):
     def setUp(self):
         self.parser = Mock()
-        self.setup_logging = self.set_up_patch('jobrunner.cli.setup_logging')
+        self.setup_logging = self.set_up_patch('jobrunner.cli.parse.setup_logging')
 
     def test_parse_arguments_adds_arguments(self):
         parse_arguments(self.parser)
@@ -23,7 +23,17 @@ class TestParseArguments(TestCase):
     def test_parse_arguments_parses_arguments(self):
         parse_arguments(self.parser)
 
-        self.parser.parse_args.assert_called_once_with()
+        self.parser.parse_args.assert_called_once_with(
+            args=None
+        )
+
+    def test_parse_arguments_parses_passed_args(self):
+        expected_args = ['these', '--are', 'some_args']
+        parse_arguments(self.parser, args=expected_args)
+
+        self.parser.parse_args.assert_called_once_with(
+            args=expected_args
+        )
 
     def test_parse_arguments_sets_up_logging(self):
         parse_arguments(self.parser)
