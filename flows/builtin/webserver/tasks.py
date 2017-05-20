@@ -17,5 +17,5 @@ class SimpleHTTPServer(Task):
         """
         log.info("Running blocking simple HTTP server")
         check_call([
-            'python', '-m', 'http.server', str(port)
+            'python3', '-m', 'http.server', str(port)
         ])
