@@ -19,6 +19,7 @@ job board as a plugin of this project.
 Clone the project, and check out your self written flows in the `jobrunner/flows` directory.
 In the `jobrunner/flows/builtin` directory is an example of what flow definition might look
 like. The entry point to post the flow can be registered with the `register_job` decorator.
+For documentation about how to write flows, look at [this documentation](https://github.com/vdloo/jobrunner/blob/master/docs/writing_flows_and_registering_jobs.md).
 
 1. Create, activate and install the dependencies into a virtualenv
 
@@ -131,7 +132,7 @@ board.
 
 Currently this is hardcoded in the settings for convenience, but this should be configurable.
 
-- Integration with raptiformica
+- Integration with [raptiformica](https://github.com/vdloo/raptiformica)
 
 The whole reason I wrote this program was so that I could have a way to distribute work over
 my cluster of random machines (mobile phones, laptops, etc). It would be nice to have something
@@ -139,4 +140,4 @@ where I can declaratively describe my cluster network in where it posts flows to
 services and processes based on what resources are available, and perhaps request resources
 based on the work available (like WOL some PC under my bed, or start some cloud instances) to
 catch up with work if the available workers can not keep up with the work waiting in the job
-queue.
+queue. But that probably falls beyond the scope of this repo.
