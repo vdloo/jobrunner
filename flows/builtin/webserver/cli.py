@@ -27,7 +27,7 @@ def parse_webserver_arguments(args=None):
 @register_job()
 def simple_http_webserver(args=None):
     """
-    Show information about running jobs
+    Post a job that runs the simple http webserver
     :param list args: Args to pass to the arg parser.
     Will use argv if none specified.
     :return None:
