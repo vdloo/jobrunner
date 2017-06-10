@@ -92,7 +92,9 @@ def save_flow_factory_into_flow_detail(
 
 
 def perform_post(
-    logbook, flow_factory, store=None, factory_args=None, factory_kwargs=None
+    logbook, flow_factory, store=None, factory_args=None, factory_kwargs=None,
+    capabilities=set()
+
 ):
     """
     Connect to the job board backend and queue the job
@@ -103,6 +105,9 @@ def perform_post(
     during flow pickup time in the conductor
     :param dict factory_kwargs: The kwargs to pass to the flow factory
     during flow pickup time in the conductor
+    :param set [str, ..] capabilities: A list of capabilities the the
+    conductor should satisfy to view the job as allowed to claim.
+    See the register_capability decorator for registering new capabilities
     :return None:
     """
     log.debug("Posting job to the job board")
@@ -120,13 +125,15 @@ def perform_post(
                 # See _flow_detail_from_job
                 # http://pydoc.net/Python/taskflow/0.6.1/
                 # taskflow.conductors.base/
-                'flow_uuid': flow_detail.uuid
+                'flow_uuid': flow_detail.uuid,
+                'capabilities': capabilities
             }
         )
 
 
 def post_job(
-    flow_factory, store=None, factory_args=None, factory_kwargs=None
+    flow_factory, store=None, factory_args=None, factory_kwargs=None,
+    capabilities=set()
 ):
     """
     Post a job to the job board
@@ -136,6 +143,9 @@ def post_job(
     during flow pickup time in the conductor
     :param dict factory_kwargs: The kwargs to pass to the flow factory
     during flow pickup time in the conductor
+    :param set [str, ..] capabilities: A list of capabilities the the
+    conductor should satisfy to view the job as allowed to claim.
+    See the register_capability decorator for registering new capabilities
     :return None:
     """
     logbook = ensure_logbook_exists()
@@ -143,5 +153,6 @@ def post_job(
         logbook, flow_factory,
         store=store,
         factory_args=factory_args,
-        factory_kwargs=factory_kwargs
+        factory_kwargs=factory_kwargs,
+        capabilities=capabilities
     )

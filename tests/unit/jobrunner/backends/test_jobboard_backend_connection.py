@@ -12,6 +12,9 @@ class TestJobboardBackendConnection(TestCase):
         self.job_board_fetch = self.set_up_patch(
             'jobrunner.backends.jobboard_backends.fetch'
         )
+        self.jobboard_iterator = self.set_up_patch(
+            'jobrunner.backends.jobboard_iterator'
+        )
 
     def test_jobboard_backend_connection_fetches_persistence_backend(self):
         self.assertFalse(self.persistence_fetch.called)
@@ -45,3 +48,17 @@ class TestJobboardBackendConnection(TestCase):
             self.assertFalse(conn.close.called)
 
         conn.close.assert_called_once_with()
+
+    def test_jobboard_backend_connection_adds_custom_jobboard_iterator(self):
+        self.assertFalse(self.jobboard_iterator.called)
+
+        with jobboard_backend_connection() as conn:
+            self.assertIn(
+                # Can't access the original conn.iterjobs anymore
+                # because at this point it has been overwritten
+                # but this hacky string test will suffice
+                '.iterjobs', str(self.jobboard_iterator.call_args[0][0])
+            )
+            self.assertEqual(
+                conn.iterjobs, self.jobboard_iterator.return_value
+            )
