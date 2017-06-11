@@ -1,9 +1,31 @@
+from contextlib import suppress
 from functools import partial
 from logging import getLogger
 
-from jobrunner.settings import CAPABILITIES
+from jobrunner.settings import CAPABILITIES, CONDUCTOR_NAME
 
 log = getLogger(__name__)
+
+
+def already_owned(jobboard_job=None):
+    """
+    Check if the job is already owned by this conductor
+    :param obj jobboard_job: TaskFlow jobboard job
+    :return bool already_owned: True if this conductor already owns the job,
+     False if not
+    """
+    # In case no owner is available yet. Taskflow will attempt to decode
+    # even though the value will be None and throw a TypeError :/
+    # todo: find a better way to check the owner,
+    # catching the TypeError is not nice
+    with suppress(TypeError):
+        if jobboard_job.board.find_owner(jobboard_job) == CONDUCTOR_NAME:
+            log.debug(
+                "Already own job {}. Assuming capabilities "
+                "satisfied".format(jobboard_job.uuid)
+            )
+            return True
+    return False
 
 
 def has_capability(capability, jobboard_job=None):
@@ -13,6 +35,15 @@ def has_capability(capability, jobboard_job=None):
     :param obj jobboard_job: TaskFlow jobboard job
     :return bool capable: True if it has the capability, False if not
     """
+    # If the job is already owned by this conductor need to assume
+    # it is capable of executing the job. If we don't and the
+    # capability changes (like when a job allocates a port which
+    # is a pre-condition to be free for that job) then the iterator
+    # will not be able to keep the lock alive because it won't see
+    # the job anymore as soon as the capability becomes unavailable.
+    if already_owned(jobboard_job):
+        return True
+
     if capability not in CAPABILITIES.keys():
         log.debug(
             "Conductor does not have the capability '{}' check "

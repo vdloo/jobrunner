@@ -80,7 +80,8 @@ def port_is_free(job):
 
     should_recheck = cached_port_is_free_timestamp is None or time(
     ) - cached_port_is_free_timestamp > 10
-    if cached_port_is_free is None or should_recheck:
+    if cached_port_is_free is None or \
+            cached_port_is_free is True or should_recheck:
         set_cached_port_is_free(
             not check_nonzero_exit(check_port_free_command)
         )
