@@ -8,6 +8,10 @@ from tests.testcase import TestCase
 
 class TestHasCapability(TestCase):
     def setUp(self):
+        self.already_owned = self.set_up_patch(
+            'jobrunner.iterator.already_owned'
+        )
+        self.already_owned.return_value = False
         self.job = Mock()
         to_del = (
             'does_not_exist',
@@ -54,6 +58,14 @@ class TestHasCapability(TestCase):
         self.assertFalse(ret)
 
     def test_has_capability_passes_job_as_arg_to_capability_checker(self):
+        # Will throw AssertionError if the jobboard_job kwarg is not self.job
+        has_capability('check_if_arg_is_job', jobboard_job=self.job)
+
+    def test_returns_true_if_already_owned_by_this_conductor_always(self):
+        self.already_owned.return_value = True
+
         ret = has_capability(
-            'check_if_arg_is_job', jobboard_job=self.job
+            'registered_and_evaluates_to_false', jobboard_job=self.job
         )
+
+        self.assertTrue(ret)

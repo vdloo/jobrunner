@@ -24,7 +24,7 @@ class TestPortIsFree(TestCase):
         self.check_nonzero_exit = self.set_up_patch(
             'flows.builtin.helpers.capabilities.check_nonzero_exit'
         )
-        self.check_nonzero_exit.return_value = False
+        self.check_nonzero_exit.return_value = True
         self.get_flow_details_by_uuid = self.set_up_patch(
             'flows.builtin.helpers.capabilities.get_flow_details_by_uuid'
         )
@@ -58,6 +58,28 @@ class TestPortIsFree(TestCase):
             'netstat -tuna | grep -q 1234'
         )
 
+    def test_port_is_free_checks_again_if_port_was_free(self):
+        set_cached_port_is_free(True)
+
+        self.time.side_effect = (
+            # Save time in global
+            1497192855.084605,
+            # Check time for the first time after setting globals
+            1497192856.064605 + 10,
+            # Save time in global, updating the first timestamp
+            1497192856.084605 + 10,
+        )
+
+        port_is_free(self.job)
+        port_is_free(self.job)
+
+        expected_calls = [
+            call('netstat -tuna | grep -q 1234')
+        ] * 2
+        self.assertCountEqual(
+            expected_calls, self.check_nonzero_exit.mock_calls
+        )
+
     def test_port_is_free_checks_again_after_ten_seconds(self):
         self.time.side_effect = (
             # Save time in global
@@ -79,13 +101,13 @@ class TestPortIsFree(TestCase):
         )
 
     def test_port_is_free_returns_true_if_port_is_free(self):
+        self.check_nonzero_exit.return_value = False
+        
         ret = port_is_free(self.job)
 
         self.assertTrue(ret)
 
     def test_port_is_free_returns_false_if_port_is_already_bound(self):
-        self.check_nonzero_exit.return_value = True
-
         ret = port_is_free(self.job)
 
         self.assertFalse(ret)

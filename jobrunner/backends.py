@@ -32,5 +32,5 @@ def jobboard_backend_connection():
     job_board_backend.connect()
     with closing(job_board_backend) as conn:
         conn.unfiltered_iterjobs = conn.iterjobs
-        conn.iterjobs = jobboard_iterator(conn.iterjobs)
+        conn.iterjobs = jobboard_iterator(conn.unfiltered_iterjobs)
         yield conn
