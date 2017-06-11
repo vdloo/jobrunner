@@ -17,7 +17,8 @@ class TestRunWebserver(TestCase):
         }
         self.post_job.assert_called_once_with(
             simple_http_server_flow_factory,
-            store=expected_store
+            store=expected_store,
+            capabilities={'webserver_port_is_free'}
         )
 
     def test_run_webserver_posts_job_with_specified_port(self):
@@ -28,5 +29,6 @@ class TestRunWebserver(TestCase):
         }
         self.post_job.assert_called_once_with(
             simple_http_server_flow_factory,
-            store=expected_store
+            store=expected_store,
+            capabilities={'webserver_port_is_free'}
         )

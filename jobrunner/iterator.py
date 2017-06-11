@@ -1,3 +1,4 @@
+from functools import partial
 from logging import getLogger
 
 from jobrunner.settings import CAPABILITIES
@@ -5,10 +6,11 @@ from jobrunner.settings import CAPABILITIES
 log = getLogger(__name__)
 
 
-def has_capability(capability):
+def has_capability(capability, jobboard_job=None):
     """
     Check if the local machine has the specified capability
     :param str capability: The capability to evaluate
+    :param obj jobboard_job: TaskFlow jobboard job
     :return bool capable: True if it has the capability, False if not
     """
     if capability not in CAPABILITIES.keys():
@@ -22,7 +24,7 @@ def has_capability(capability):
         "Checking if conductor has capability '{}' "
         "required for this job.".format(capability)
     )
-    capable = CAPABILITIES[capability]()
+    capable = CAPABILITIES[capability](jobboard_job)
     if capable:
         log.debug(
             "Capability '{}' satisfied. Will attempt "
@@ -51,7 +53,12 @@ def jobboard_iterator(iterjobs):
         :param obj jobboard_job: TaskFlow jobboard job
         :return bool capable: True if it has all capabilities, False if not
         """
-        return all(map(has_capability, jobboard_job.details['capabilities']))
+        return all(
+            map(
+                partial(has_capability, jobboard_job=jobboard_job),
+                jobboard_job.details['capabilities']
+            )
+        )
 
     def iterate(only_unclaimed=False, ensure_fresh=False):
         return filter(check_all_capabilities, iterjobs(

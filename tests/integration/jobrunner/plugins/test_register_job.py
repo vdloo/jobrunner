@@ -53,4 +53,5 @@ print(dumps(list(JOBS.keys())))
         expected_jobs = (
             'simple_http_webserver',
         )
-        self.assertCountEqual(ret, expected_jobs)
+        for expected_job in expected_jobs:
+            self.assertIn(expected_job, ret)

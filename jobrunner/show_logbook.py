@@ -52,6 +52,18 @@ def get_owner(flow_uuid, jobboard_backend):
             return jobboard_backend.find_owner(job)
 
 
+def get_flow_details_by_uuid(flow_uuid):
+    """
+    Retrieve the flow_details for a flow in the persistence
+    backend by uuid
+    :param str flow_uuid: UUID of the flow to find the flow_details of
+    :return obj flow_details: A TaskFlow FlowDetails object.
+    Contains the initial store contents and more.
+    """
+    with persistence_backend_connection() as p:
+        return p.get_flow_details(flow_uuid)
+
+
 def get_all_logbooks():
     """
     Retrieve all logbooks from the persistence backend and
