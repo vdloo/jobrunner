@@ -63,15 +63,22 @@ class TestJobboardIterator(TestCase):
         # side effects. That's what the list() is for
         list(ret_func())
 
-        expected_calls = map(
-            call, (
+        expected_calls = (
+            call(
                 'is_x86_64',
+                jobboard_job=fake_job_with_satisfied_capability_requirements
+            ),
+            call(
                 'is_blabla',
+                jobboard_job=fake_job_with_unsatisfied_capability_requirements
+            ),
+            call(
                 'is_armv7',
-                # note that 'is_ubuntu' is short-circuited out by all()
-                # if any earlier capability evaluated to False, all remaining
-                # capabilities for that job will not be checked.
-            )
+                jobboard_job=fake_job_with_unsatisfied_capability_requirements
+            ),
+            # note that 'is_ubuntu' is short-circuited out by all()
+            # if any earlier capability evaluated to False, all remaining
+            # capabilities for that job will not be checked.
         )
 
         self.assertCountEqual(

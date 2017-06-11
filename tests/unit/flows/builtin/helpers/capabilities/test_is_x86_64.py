@@ -1,11 +1,14 @@
-from flows.builtin.webserver.capabilities import is_x86_64, set_cached_is_x86_64
+from mock import Mock
+
+from flows.builtin.helpers.capabilities import is_x86_64, set_cached_is_x86_64
 from tests.testcase import TestCase
 
 
 class TestIsX864(TestCase):
     def setUp(self):
+        self.job = Mock()
         self.uname = self.set_up_patch(
-            'flows.builtin.webserver.capabilities.uname'
+            'flows.builtin.helpers.capabilities.uname'
         )
         # Pretending this is a os.uname_result object
         self.uname.return_value = (
@@ -17,7 +20,7 @@ class TestIsX864(TestCase):
         set_cached_is_x86_64(None)
 
     def test_is_x86_64_returns_true_if_x86_64(self):
-        ret = is_x86_64()
+        ret = is_x86_64(self.job)
 
         self.assertTrue(ret)
 
@@ -28,7 +31,7 @@ class TestIsX864(TestCase):
             'i686', ''
         )
 
-        ret = is_x86_64()
+        ret = is_x86_64(self.job)
 
         self.assertFalse(ret)
 
@@ -40,13 +43,13 @@ class TestIsX864(TestCase):
             'armv7l', ''
         )
 
-        ret = is_x86_64()
+        ret = is_x86_64(self.job)
 
         self.assertFalse(ret)
 
     def test_is_x86_64_caches_result(self):
-        is_x86_64()
-        is_x86_64()
+        is_x86_64(self.job)
+        is_x86_64(self.job)
 
         # Once, not twice. The second time the cached result is used.
         self.uname.assert_called_once_with()

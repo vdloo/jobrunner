@@ -50,7 +50,7 @@ def register_capability():
 
     Usage:
         @register_capability()
-        def is_x86_64():
+        def is_x86_64(job):
             # Implement the check here
             return True
 

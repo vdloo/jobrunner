@@ -51,6 +51,7 @@ print(dumps(list(CAPABILITIES.keys())))
         ).decode('utf-8'))
 
         expected_capabilities = (
-            'is_x86_64',
+            'is_x86_64', 'port_is_free'
         )
-        self.assertCountEqual(ret, expected_capabilities)
+        for expected_capability in expected_capabilities:
+            self.assertIn(expected_capability, ret)

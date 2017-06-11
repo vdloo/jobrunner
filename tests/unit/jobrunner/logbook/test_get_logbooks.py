@@ -1,7 +1,7 @@
 from mock import Mock
 from tests.testcase import TestCase
 
-from jobrunner.show_logbook import get_logbooks
+from jobrunner.logbook import get_logbooks
 
 
 class TestGetLogbooks(TestCase):

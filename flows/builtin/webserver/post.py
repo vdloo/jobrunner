@@ -12,5 +12,6 @@ def run_webserver(port=8080):
         simple_http_server_flow_factory,
         store={
             'port': port
-        }
+        },
+        capabilities={'webserver_port_is_free'}
     )

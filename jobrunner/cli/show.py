@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
 
 from jobrunner.cli.parse import parse_arguments
-from jobrunner.show_logbook import show_logbook
+from jobrunner.logbook import show_logbook
 
 
 def parse_show_arguments():
