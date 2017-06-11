@@ -13,5 +13,5 @@ def run_webserver(port=8080):
         store={
             'port': port
         },
-        capabilities={'webserver_port_is_free'}
+        capabilities={'port_is_free'}
     )
