@@ -186,7 +186,7 @@ from argparse import ArgumentParser
 from flows.myflows.myjob.post import run_my_flow
 from flows.myflows.myjob.post import my_flow_factory
 from jobrunner.cli.parse import parse_arguments
-from jobrunner.jobs import register_job
+from jobrunner.plugins import register_job
 
 
 def parse_myjob_arguments(args=None):
