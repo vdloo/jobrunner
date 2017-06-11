@@ -46,7 +46,7 @@ def get_owner(flow_uuid, jobboard_backend):
     :param obj jobboard_backend: Connection to the jobboard backend
     :return str owner: Name of the conductor owning the job
     """
-    for job in jobboard_backend.iterjobs():
+    for job in jobboard_backend.unfiltered_iterjobs():
         cur_uuid = job.details.get('flow_uuid')
         if cur_uuid and cur_uuid == flow_uuid:
             return jobboard_backend.find_owner(job)
