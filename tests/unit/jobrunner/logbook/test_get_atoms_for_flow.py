@@ -1,7 +1,7 @@
 from mock import Mock
 from tests.testcase import TestCase
 
-from jobrunner.show_logbook import get_flows_from_logbook, get_atoms_for_flow
+from jobrunner.logbook import get_atoms_for_flow
 
 
 class TestGetAtomsForFLow(TestCase):

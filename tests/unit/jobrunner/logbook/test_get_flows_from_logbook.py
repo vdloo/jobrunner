@@ -1,7 +1,7 @@
 from mock import Mock
 from tests.testcase import TestCase
 
-from jobrunner.show_logbook import get_flows_from_logbook
+from jobrunner.logbook import get_flows_from_logbook
 
 
 class TestGetFlowsFromLogbook(TestCase):

@@ -2,7 +2,7 @@ from time import time
 from platform import uname
 
 from jobrunner.plugins import register_capability
-from jobrunner.show_logbook import get_flow_details_by_uuid
+from jobrunner.logbook import get_flow_details_by_uuid
 from jobrunner.utils import check_nonzero_exit
 
 cached_is_x86_64 = None

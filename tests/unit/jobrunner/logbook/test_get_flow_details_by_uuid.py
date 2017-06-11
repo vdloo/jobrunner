@@ -2,7 +2,7 @@ from uuid import uuid4
 
 from mock import Mock
 
-from jobrunner.show_logbook import get_flow_details_by_uuid
+from jobrunner.logbook import get_flow_details_by_uuid
 from tests.testcase import TestCase
 
 
@@ -10,7 +10,7 @@ class TestGetFlowDetailsByUuid(TestCase):
     def setUp(self):
         self.flow_uuid = str(uuid4())
         self.persistence_backend_connection = self.set_up_patch(
-            'jobrunner.show_logbook.persistence_backend_connection'
+            'jobrunner.logbook.persistence_backend_connection'
         )
         self.persistence_backend_connection.return_value \
             .__exit__ = lambda a, b, c, d: None
