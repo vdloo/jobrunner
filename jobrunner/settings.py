@@ -1,7 +1,6 @@
 import os
 from os.path import dirname, join
 from socket import gethostname
-from subprocess import check_output, CalledProcessError
 
 from os.path import realpath
 
@@ -21,5 +20,6 @@ PERSISTENCE_CONF = {
 LOGBOOK_NAME = 'jobrunner'
 SHOW_POLLERS = 20
 JOBS = dict()
+CAPABILITIES = dict()
 
 CONDUCTOR_NAME = gethostname()

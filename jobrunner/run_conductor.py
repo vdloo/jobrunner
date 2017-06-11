@@ -3,6 +3,7 @@ from taskflow.persistence import backends as persistence_backends
 from taskflow.conductors import backends as conductor_backends
 
 from jobrunner.backends import jobboard_backend_connection
+from jobrunner.plugins import load_all_plugins
 from jobrunner.settings import PERSISTENCE_CONF, CONDUCTOR_NAME
 
 log = getLogger(__name__)
@@ -58,6 +59,7 @@ def run_conductor():
     Registers a logger to log any TaskFlow state changes
     :return None:
     """
+    load_all_plugins()
     with jobboard_backend_connection() as job_backend:
         persist_backend = persistence_backends.fetch(PERSISTENCE_CONF)
         start_conductor(persist_backend, job_backend)

@@ -2,7 +2,7 @@ from argparse import ArgumentParser
 
 from flows.builtin.webserver.post import run_webserver
 from jobrunner.cli.parse import parse_arguments
-from jobrunner.jobs import register_job
+from jobrunner.plugins import register_job
 
 
 def parse_webserver_arguments(args=None):

@@ -2,6 +2,7 @@ from contextlib import contextmanager, closing
 from taskflow.jobs import backends as jobboard_backends
 from taskflow.persistence import backends as persistence_backends
 
+from jobrunner.iterator import jobboard_iterator
 from jobrunner.settings import PERSISTENCE_CONF, CONDUCTOR_NAME, JOBBOARD_CONF
 
 
@@ -30,4 +31,5 @@ def jobboard_backend_connection():
     )
     job_board_backend.connect()
     with closing(job_board_backend) as conn:
+        conn.iterjobs = jobboard_iterator(conn.iterjobs)
         yield conn

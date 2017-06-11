@@ -30,7 +30,8 @@ class TestPostJob(TestCase):
             fixture_flow_factory,
             store=None,
             factory_args=None,
-            factory_kwargs=None
+            factory_kwargs=None,
+            capabilities=set()
         )
 
     def test_post_job_performs_post_with_specified_store(self):
@@ -45,7 +46,8 @@ class TestPostJob(TestCase):
             fixture_flow_factory,
             store=expected_store,
             factory_args=None,
-            factory_kwargs=None
+            factory_kwargs=None,
+            capabilities=set()
         )
 
     def test_post_job_performs_post_with_specified_factory_args(self):
@@ -58,7 +60,8 @@ class TestPostJob(TestCase):
             fixture_flow_factory,
             store=None,
             factory_args=expected_args,
-            factory_kwargs=None
+            factory_kwargs=None,
+            capabilities=set()
         )
 
     def test_post_job_performs_post_with_specified_factory_kwargs(self):
@@ -74,5 +77,20 @@ class TestPostJob(TestCase):
             fixture_flow_factory,
             store=None,
             factory_args=None,
-            factory_kwargs=expected_kwargs
+            factory_kwargs=expected_kwargs,
+            capabilities=set()
+        )
+
+    def test_post_job_performs_post_job_with_specified_capabilities(self):
+        expected_capabilities = {'is_x86_64', 'is_ubuntu'}
+
+        post_job(fixture_flow_factory, capabilities=expected_capabilities)
+
+        self.perform_post.assert_called_once_with(
+            self.ensure_logbook_exists.return_value,
+            fixture_flow_factory,
+            store=None,
+            factory_args=None,
+            factory_kwargs=None,
+            capabilities=expected_capabilities
         )

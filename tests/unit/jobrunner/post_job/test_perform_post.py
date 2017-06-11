@@ -115,8 +115,28 @@ class TestPerformPost(TestCase):
     def test_perform_post_posts_job_using_the_job_backend_connection(self):
         perform_post(self.logbook, fixture_flow_factory)
 
+        expected_details = {
+            'flow_uuid': self.compose_flow_detail.return_value.uuid,
+            'capabilities': set()
+        }
         self.j_connection.post.assert_called_once_with(
             'job-from-{}'.format(CONDUCTOR_NAME),
             book=self.logbook,
-            details={'flow_uuid': self.compose_flow_detail.return_value.uuid}
+            details=expected_details
+        )
+
+    def test_perform_post_posts_job_with_specified_capabilities(self):
+        perform_post(
+            self.logbook, fixture_flow_factory,
+            capabilities={'is_x86_64', 'is_ubuntu'}
+        )
+
+        expected_details = {
+            'flow_uuid': self.compose_flow_detail.return_value.uuid,
+            'capabilities': {'is_x86_64', 'is_ubuntu'}
+        }
+        self.j_connection.post.assert_called_once_with(
+            'job-from-{}'.format(CONDUCTOR_NAME),
+            book=self.logbook,
+            details=expected_details
         )
