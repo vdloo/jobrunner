@@ -53,11 +53,8 @@ class TestJobboardBackendConnection(TestCase):
         self.assertFalse(self.jobboard_iterator.called)
 
         with jobboard_backend_connection() as conn:
-            self.assertIn(
-                # Can't access the original conn.iterjobs anymore
-                # because at this point it has been overwritten
-                # but this hacky string test will suffice
-                '.iterjobs', str(self.jobboard_iterator.call_args[0][0])
+            self.jobboard_iterator.assert_called_once_with(
+                conn.unfiltered_iterjobs
             )
             self.assertEqual(
                 conn.iterjobs, self.jobboard_iterator.return_value
