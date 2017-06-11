@@ -7,5 +7,5 @@ for deploy_host in $DEPLOY_HOSTS; do
     ssh root@$deploy_host mkdir -p /tmp/jobrunner
     rsync -az `pwd` root@[$deploy_host]:/tmp
     ssh root@$deploy_host 'bash -c "cd /tmp/jobrunner; source activate_venv"'
-    ssh root@$deploy_host '/usr/bin/env screen -d -m sh -c "PYTHONPATH=/tmp/jobrunner /tmp/jobrunner/.venv/bin/python /tmp/jobrunner/bin/jobrunner_run.py"'
+    ssh root@$deploy_host '/usr/bin/env screen -d -m sh -c "PYTHONPATH=/tmp/jobrunner /tmp/jobrunner/.venv/bin/python /tmp/jobrunner/bin/jobrunner_run.py --verbose"'
 done
