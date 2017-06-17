@@ -118,6 +118,13 @@ having to code up a conductor and functions that save flow details and logbooks 
 Just register flows in the `flows/` directory and this application will load them into the job
 poster.
 
+### Job scheduling based on capability
+
+Jobs can be posted with a required 'capability'. This means that a conductor will evaluate a 
+condition and only claim the job if that condition evaluated to `True`. An example of such 
+capability might be `is_x86_64` or even dynamic things like `port_is_free` where the port is 
+retrieved from the flow details in the conductor. See the [capabilities documentation](https://github.com/vdloo/jobrunner/blob/master/docs/capabilities.md) for 
+information about how to use and define these constraints.
 
 ## Future
 
