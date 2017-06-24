@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
 set -e
 
-while getopts "1" opt; do
+while getopts "1i" opt; do
     case $opt in
         1) RUN_ONCE=1;;
+        i) INTEGRATION=1;;
     esac
 done
+
+[ -z $INTEGRATION ] && TEST_SUITE="unit" || TEST_SUITE="integration"
 
 shift "$((OPTIND-1))"
 
@@ -23,8 +26,8 @@ export PYTHONDONTWRITEBYTECODE=1
 find . -type f -name *.pyc -delete
 
 test_script="
-    echo 'Running jobrunner unit tests';
-    nosetests --processes=$numprocs;
+    echo 'Running jobrunner $TEST_SUITE tests';
+    nosetests --processes=$numprocs tests/$TEST_SUITE;
     echo 'Checking PEP8';
     autopep8 -r --diff jobrunner;
 "
