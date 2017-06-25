@@ -28,7 +28,7 @@ def print_post_help():
     # the post command runs any of the registered jobs functions
     # which should all implement an argparser themselves for job
     # specific options.
-    print(POST_HELP_MENU.format('\n'.join(JOBS.keys())))
+    print(POST_HELP_MENU.format('\n  '.join(JOBS.keys())))
 
 
 def post():
