@@ -8,14 +8,15 @@ top_dir = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                        os.pardir))
 PROJECT_DIR = join(dirname(dirname(realpath(__file__))))
 # todo: get the IP from the ENV or a flag
-HARDCODED_INTERNAL_IP = 'fc63:2207:6b22:91e5:5b0b:ef32:4786:c262'
+REDIS_HOST = 'redis.service.consul'
+MYSQL_HOST = 'mysql.service.consul'
 JOBBOARD_CONF = {
     'board': 'redis',
-    'host': HARDCODED_INTERNAL_IP
+    'host': REDIS_HOST
 }
 PERSISTENCE_CONF = {
     "connection": "mysql://taskflow:taskflow@[{}]"
-                  "/taskflow".format(HARDCODED_INTERNAL_IP),
+                  "/taskflow".format(MYSQL_HOST),
 }
 LOGBOOK_NAME = 'jobrunner'
 SHOW_POLLERS = 20
