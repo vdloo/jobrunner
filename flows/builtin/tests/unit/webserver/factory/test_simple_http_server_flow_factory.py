@@ -4,9 +4,6 @@ from tests.testcase import TestCase
 
 
 class TestSimpleHTTPServerFlowFactory(TestCase):
-    def setUp(self):
-        pass
-
     def test_simple_http_server_flow_factory_creates_flow_with_name(self):
         flow = simple_http_server_flow_factory()
 
