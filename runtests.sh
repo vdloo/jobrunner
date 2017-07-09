@@ -27,7 +27,7 @@ find . -type f -name *.pyc -delete
 
 test_script="
     echo 'Running jobrunner $TEST_SUITE tests';
-    nosetests --processes=$numprocs tests/$TEST_SUITE $(find flows/*/ -type d -name $TEST_SUITE);
+    nosetests --processes=$numprocs tests/$TEST_SUITE $(find flows/*/ -type d -name $TEST_SUITE | tr '\n' ' ');
     echo 'Checking PEP8';
     autopep8 -r --diff jobrunner;
 "
