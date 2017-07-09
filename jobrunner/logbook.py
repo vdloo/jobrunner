@@ -105,6 +105,9 @@ def print_running_from_logbook(logbook):
     """
     system('clear')
     print("{:<20} {:<37} {:<16} {:<26}".format('NAME', 'ID', 'STATE', 'OWNER'))
+    if not logbook['flow_details']:
+        print("No running or queued jobs")
+        return
     for flow_detail in logbook['flow_details']:
         state = flow_detail['state']
         is_running = state == 'RUNNING'
@@ -150,6 +153,7 @@ def show_logbook():
     can be high but the processing power required is low
     :return None:
     """
+    print("Not connected to jobboard")
     pool = Pool(processes=SHOW_POLLERS)
     try:
         for _ in range(SHOW_POLLERS):
