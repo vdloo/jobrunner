@@ -8,14 +8,14 @@ top_dir = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                        os.pardir))
 PROJECT_DIR = join(dirname(dirname(realpath(__file__))))
 # todo: get the IP from the ENV or a flag
-REDIS_HOST = 'redis.service.consul'
-MYSQL_HOST = 'mysql.service.consul'
+REDIS_HOST = '172.17.0.1'  # Docker gateway
+MYSQL_HOST = '172.17.0.1'  # Docker gateway
 JOBBOARD_CONF = {
     'board': 'redis',
     'host': REDIS_HOST
 }
 PERSISTENCE_CONF = {
-    "connection": "mysql://taskflow:taskflow@[{}]"
+    "connection": "mysql://root:taskflow@[{}]"
                   "/taskflow".format(MYSQL_HOST),
 }
 LOGBOOK_NAME = 'jobrunner'
