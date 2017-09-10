@@ -1,5 +1,4 @@
-from argparse import ArgumentParser
-
+from flows.builtin.helpers.parser import flow_parser
 from flows.builtin.webserver.post import run_webserver
 from jobrunner.cli.parse import parse_arguments
 from jobrunner.plugins import register_job
@@ -13,7 +12,7 @@ def parse_webserver_arguments(args=None):
     Will use argv if none specified.
     :return obj args: parsed arguments
     """
-    parser = ArgumentParser(
+    parser = flow_parser(
         prog="jobrunner post simple_http_webserver",
         description='Post a job that runs a simple HTTP webserver'
     )
@@ -33,4 +32,4 @@ def simple_http_webserver(args=None):
     :return None:
     """
     args = parse_webserver_arguments(args=args)
-    run_webserver(port=args.port)
+    run_webserver(port=args.port, hierarchy=args.hierarchy)

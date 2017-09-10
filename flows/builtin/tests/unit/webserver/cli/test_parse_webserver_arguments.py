@@ -6,8 +6,8 @@ from tests.testcase import TestCase
 
 class TestParseWebserverArguments(TestCase):
     def setUp(self):
-        self.argument_parser = self.set_up_patch(
-            'flows.builtin.webserver.cli.ArgumentParser'
+        self.flow_parser = self.set_up_patch(
+            'flows.builtin.webserver.cli.flow_parser'
         )
         self.parse_arguments = self.set_up_patch(
             'flows.builtin.webserver.cli.parse_arguments'
@@ -16,7 +16,7 @@ class TestParseWebserverArguments(TestCase):
     def test_parse_webserver_arguments_instantiates_argparser(self):
         parse_webserver_arguments()
 
-        self.argument_parser.assert_called_once_with(
+        self.flow_parser.assert_called_once_with(
             prog='jobrunner post simple_http_webserver',
             description='Post a job that runs a simple HTTP webserver'
         )
@@ -24,7 +24,7 @@ class TestParseWebserverArguments(TestCase):
     def test_parse_webserver_arguments_adds_port_argument(self):
         parse_webserver_arguments()
 
-        self.argument_parser.return_value.add_argument.assert_called_once_with(
+        self.flow_parser.return_value.add_argument.assert_called_once_with(
             '--port', '-p', type=int, default=8080,
             help=ANY
         )
@@ -33,7 +33,7 @@ class TestParseWebserverArguments(TestCase):
         parse_webserver_arguments()
 
         self.parse_arguments.assert_called_once_with(
-            self.argument_parser.return_value, args=None
+            self.flow_parser.return_value, args=None
         )
 
     def test_parse_webserver_arguments_parses_specified_arguments(self):
@@ -42,7 +42,7 @@ class TestParseWebserverArguments(TestCase):
         parse_webserver_arguments(args=expected_args)
 
         self.parse_arguments.assert_called_once_with(
-            self.argument_parser.return_value, args=expected_args
+            self.flow_parser.return_value, args=expected_args
         )
 
     def test_parse_webserver_arguments_returns_parsed_arguments(self):

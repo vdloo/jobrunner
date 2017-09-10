@@ -131,9 +131,67 @@ def perform_post(
         )
 
 
+def compile_flow(
+    flow_factory, store=None, factory_args=None, factory_kwargs=None
+):
+    """
+    Load an engine with the specified flow data and compile the flow
+    object, returns a loaded engine.
+    :param obj flow_factory: A function that returns a flow
+    :param dict store: The store to post with the flow
+    :param list factory_args: The args to pass to the flow factory
+    during flow pickup time in the conductor
+    :param dict factory_kwargs: The kwargs to pass to the flow factory
+    during flow pickup time in the conductor
+    :return obj engine: The loaded engine
+    """
+    engine = engines.load_from_factory(
+        flow_factory, factory_args=factory_args,
+        factory_kwargs=factory_kwargs, store=store
+    )
+    engine.compile()
+    engine.prepare()
+    engine.validate()
+    return engine
+
+
+def print_hierarchy(engine, format_line=None):
+    """
+    Print the hierarchy of the flow loaded in the provided engine
+    :param obj engine: A loaded taskflow engine
+    :param func format_line: A function to format the nodes in the
+    engine.compilation.hierarchy lines.
+    :return None:
+    """
+    hierarchy = engine.compilation.hierarchy
+    # https://github.com/openstack/taskflow/blob/master/taskflow/engines/action_engine/compiler.py#L364
+    for line in hierarchy.pformat(stringify_node=format_line).splitlines():
+        print(line)
+
+
+def draw_hierarchy(
+    flow_factory, store=None, factory_args=None, factory_kwargs=None
+):
+    """
+    Compile the flow and print the execution graph
+    :param obj flow_factory: A function that returns a flow
+    :param dict store: The store to post with the flow
+    :param list factory_args: The args to pass to the flow factory
+    during flow pickup time in the conductor
+    :param dict factory_kwargs: The kwargs to pass to the flow factory
+    during flow pickup time in the conductor
+    :return None:
+    """
+    engine = compile_flow(
+        flow_factory, store=store,
+        factory_args=factory_args, factory_kwargs=factory_kwargs
+    )
+    print_hierarchy(engine)
+
+
 def post_job(
     flow_factory, store=None, factory_args=None, factory_kwargs=None,
-    capabilities=set()
+    capabilities=set(), hierarchy=False
 ):
     """
     Post a job to the job board
@@ -146,13 +204,23 @@ def post_job(
     :param set [str, ..] capabilities: A list of capabilities the the
     conductor should satisfy to view the job as allowed to claim.
     See the register_capability decorator for registering new capabilities
+    :param hierarchy: Print the execution graph of what the job would
+    look like if compiled by the conductor at this moment.
     :return None:
     """
-    logbook = ensure_logbook_exists()
-    perform_post(
-        logbook, flow_factory,
-        store=store,
-        factory_args=factory_args,
-        factory_kwargs=factory_kwargs,
-        capabilities=capabilities
-    )
+    if hierarchy:
+        draw_hierarchy(
+            flow_factory,
+            store=store,
+            factory_args=factory_args,
+            factory_kwargs=factory_kwargs
+        )
+    else:
+        logbook = ensure_logbook_exists()
+        perform_post(
+            logbook, flow_factory,
+            store=store,
+            factory_args=factory_args,
+            factory_kwargs=factory_kwargs,
+            capabilities=capabilities
+        )

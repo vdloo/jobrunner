@@ -31,5 +31,6 @@ class TestSimpleHttpWebserver(TestCase):
         simple_http_webserver()
 
         self.run_webserver.assert_called_once_with(
-            port=self.parse_webserver_arguments.return_value.port
+            port=self.parse_webserver_arguments.return_value.port,
+            hierarchy=self.parse_webserver_arguments.return_value.hierarchy
         )
