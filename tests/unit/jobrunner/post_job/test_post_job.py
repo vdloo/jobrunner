@@ -16,6 +16,9 @@ class TestPostJob(TestCase):
         self.perform_post = self.set_up_patch(
             'jobrunner.post_job.perform_post'
         )
+        self.draw_hierarchy = self.set_up_patch(
+            'jobrunner.post_job.draw_hierarchy'
+        )
 
     def test_post_job_ensures_logbook_exists(self):
         post_job(fixture_flow_factory)
@@ -93,4 +96,63 @@ class TestPostJob(TestCase):
             factory_args=None,
             factory_kwargs=None,
             capabilities=expected_capabilities
+        )
+
+    def test_post_job_draws_hierarchy(self):
+        post_job(fixture_flow_factory, hierarchy=True)
+
+        self.draw_hierarchy.assert_called_once_with(
+            fixture_flow_factory,
+            store=None,
+            factory_args=None,
+            factory_kwargs=None
+        )
+
+    def test_post_job_draws_hierarchy_with_specified_store(self):
+        expected_store = {
+            'some_key': 'some_value'
+        }
+
+        post_job(fixture_flow_factory, store=expected_store, hierarchy=True)
+
+        self.draw_hierarchy.assert_called_once_with(
+            fixture_flow_factory,
+            store=expected_store,
+            factory_args=None,
+            factory_kwargs=None
+        )
+
+    def test_post_job_draws_hierarchy_with_specified_factory_args(self):
+        expected_args = [True, False, 'blabla']
+
+        post_job(
+            fixture_flow_factory,
+            factory_args=expected_args,
+            hierarchy=True
+        )
+
+        self.draw_hierarchy.assert_called_once_with(
+            fixture_flow_factory,
+            store=None,
+            factory_args=expected_args,
+            factory_kwargs=None
+        )
+
+    def test_post_job_draws_hierarchy_with_specified_factory_kwargs(self):
+        expected_kwargs = {
+            'some_param': True,
+            'some_other_param': 'blabla'
+        }
+
+        post_job(
+            fixture_flow_factory,
+            factory_kwargs=expected_kwargs,
+            hierarchy=True
+        )
+
+        self.draw_hierarchy.assert_called_once_with(
+            fixture_flow_factory,
+            store=None,
+            factory_args=None,
+            factory_kwargs=expected_kwargs
         )
