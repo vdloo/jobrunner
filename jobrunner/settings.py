@@ -10,7 +10,7 @@ top_dir = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                        os.pardir))
 PROJECT_DIR = join(dirname(dirname(realpath(__file__))))
 BACKEND_HOST = check_output(
-    "consul members | grep retropie | awk '{print$2}' | awk -F'[][]' '{print $2}'",
+    "consul members | grep greatplateau | awk '{print$2}' | awk -F'[][]' '{print $2}'",
     shell=True
 ).decode('utf-8').strip()
 REDIS_HOST = BACKEND_HOST
