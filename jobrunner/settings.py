@@ -24,7 +24,7 @@ PERSISTENCE_CONF = {
                   "/simulacra".format(MYSQL_HOST),
 }
 LOGBOOK_NAME = 'jobrunner'
-SHOW_POLLERS = 20
+SHOW_POLLERS = 3
 JOBS = dict()
 CAPABILITIES = dict()
 
