@@ -1,5 +1,5 @@
 -e git+https://github.com/vdloo/taskflow.git@redis-lock-times-out-after-5-seconds#egg=taskflow 
-redis==2.10.5
+redis==4.4.4
 SQLAlchemy==1.1.9
 SQLAlchemy-Utils==0.32.14
 alembic==0.9.1
